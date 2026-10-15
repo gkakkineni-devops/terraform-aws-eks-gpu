@@ -1,0 +1,53 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  terraform:
+    name: Format, validate and scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.9.8
+
+      - name: Check formatting
+        run: terraform fmt -check -recursive -diff
+
+      - name: Initialise without a backend
+        run: terraform init -backend=false -input=false
+
+      - name: Validate
+        run: terraform validate
+
+      - uses: terraform-linters/setup-tflint@v4
+        with:
+          tflint_version: v0.53.0
+
+      - name: Lint
+        run: |
+          tflint --init
+          tflint --recursive
+
+      - name: Scan for misconfigurations with Trivy
+        run: |
+          docker run --rm -v "$PWD:/src" aquasec/trivy:0.57.1 config \
+            --severity HIGH,CRITICAL --exit-code 1 --skip-dirs /src/.terraform /src
+
+      - name: Check the Kubernetes test pod
+        run: |
+          curl -sSL https://github.com/yannh/kubeconform/releases/download/v0.6.7/kubeconform-linux-amd64.tar.gz | tar xz kubeconform
+          ./kubeconform -strict -summary k8s/
