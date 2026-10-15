@@ -56,7 +56,7 @@ Each push runs `terraform fmt -check`, `terraform init` and `validate`, tflint, 
 
 ## Scan exceptions
 
-Two Trivy findings are ignored in `.trivyignore`, each with the reason next to it: the public API endpoint (limited to your IP) and open outbound traffic from worker nodes (needed to pull images).
+Three Trivy findings are ignored in `.trivyignore`, each with the reason next to it: the public API endpoint (limited to your IP), open outbound traffic from worker nodes (needed to pull images), and the VPC module's default network ACLs (security groups do the filtering).
 
 ## License
 
