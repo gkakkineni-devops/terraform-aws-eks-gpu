@@ -54,6 +54,10 @@ The pieces that bill while idle: the EKS control plane, the NAT gateway and the 
 
 Each push runs `terraform fmt -check`, `terraform init` and `validate`, tflint, a Trivy config scan, and a kubeconform check on the test pod.
 
+## Scan exceptions
+
+Two Trivy findings are ignored in `.trivyignore`, each with the reason next to it: the public API endpoint (limited to your IP) and open outbound traffic from worker nodes (needed to pull images).
+
 ## License
 
 MIT

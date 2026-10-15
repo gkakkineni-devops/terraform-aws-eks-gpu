@@ -22,7 +22,7 @@ jobs:
 
       - name: Scan for misconfigurations with Trivy
         run: |
-          docker run --rm -v "$PWD:/src" aquasec/trivy:0.57.1 config -q --severity HIGH,CRITICAL --exit-code 1 /src > t.txt 2>&1 || { grep -E 'AVD|Failures|\.tf|\.yaml' t.txt | head -20 | sed 's/^/::error::/'; exit 1; }
+          docker run --rm -v "$PWD:/src" aquasec/trivy:0.57.1 config -q --ignorefile /src/.trivyignore --severity HIGH,CRITICAL --exit-code 1 /src
 
       - uses: hashicorp/setup-terraform@v3
         with:
