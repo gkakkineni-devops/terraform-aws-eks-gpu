@@ -44,13 +44,9 @@ jobs:
 
       - name: Scan for misconfigurations with Trivy
         run: |
-          docker pull -q aquasec/trivy:0.57.1 >/dev/null
-          set +e
           docker run --rm -v "$PWD:/src" aquasec/trivy:0.57.1 config -q \
-            --severity HIGH,CRITICAL --exit-code 1 /src > trivy.txt 2>&1
-          rc=$?
-          grep -E 'AVD-|HIGH|CRITICAL|\.tf|Failures' trivy.txt | head -30 | sed 's/^/::error::/'
-          exit $rc
+            --severity HIGH,CRITICAL --exit-code 1 \
+            --skip-dirs '**/.terraform' /src
 
       - name: Check the Kubernetes test pod
         run: |
