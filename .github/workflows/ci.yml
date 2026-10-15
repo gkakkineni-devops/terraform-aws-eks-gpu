@@ -20,6 +20,10 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
+      - name: Scan for misconfigurations with Trivy
+        run: |
+          docker run --rm -v "$PWD:/src" aquasec/trivy:0.57.1 config -q --severity HIGH,CRITICAL --exit-code 1 /src
+
       - uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.9.8
@@ -41,12 +45,6 @@ jobs:
         run: |
           tflint --init
           tflint --recursive
-
-      - name: Scan for misconfigurations with Trivy
-        run: |
-          docker run --rm -v "$PWD:/src" aquasec/trivy:0.57.1 config -q \
-            --severity HIGH,CRITICAL --exit-code 1 \
-            --skip-dirs '**/.terraform' /src
 
       - name: Check the Kubernetes test pod
         run: |
