@@ -46,6 +46,10 @@ You should see the `nvidia-smi` table. Scale the group back to 0 when you're don
 
 The node group is tagged so a cluster autoscaler could manage it, but I haven't included one. Karpenter would be the next step.
 
+## Kubernetes version
+
+The default is 1.35. EKS charges extra for versions that have left standard support, and old versions are retired on a schedule, so check the [EKS version calendar](https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html) and update `kubernetes_version` before you apply.
+
 ## Cost
 
 The pieces that bill while idle: the EKS control plane, the NAT gateway and the two system nodes. The GPU group costs nothing at 0. Run `terraform destroy` when you finish experimenting.
