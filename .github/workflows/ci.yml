@@ -24,7 +24,7 @@ jobs:
         run: |
           docker run --rm -v "$PWD:/src" -w /src aquasec/trivy:0.57.1 config -q --ignorefile .trivyignore --severity HIGH,CRITICAL --exit-code 1 /src
 
-      - uses: hashicorp/setup-terraform@v3
+      - uses: hashicorp/setup-terraform@v4
         with:
           terraform_version: 1.16.7
 
