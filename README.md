@@ -1,5 +1,7 @@
 # terraform-aws-eks-gpu
 
+[![CI](https://github.com/gkakkineni-devops/terraform-aws-eks-gpu/actions/workflows/ci.yml/badge.svg)](https://github.com/gkakkineni-devops/terraform-aws-eks-gpu/actions/workflows/ci.yml)
+
 Terraform for an EKS cluster with a GPU node group that sits at zero nodes until you need it. I built it to practice the part of GPU platforms that costs the most money: keeping expensive nodes off unless a job is running.
 
 **Read this first:** I have validated this code but I have not applied it to an AWS account. CI runs `terraform validate`, tflint and a Trivy scan on every push. Nothing in this repo has created real infrastructure, so expect to adjust things on a first real run.
