@@ -15,6 +15,15 @@ Terraform for an EKS cluster with a GPU node group that sits at zero nodes until
 
 It uses the community `terraform-aws-modules` VPC and EKS modules instead of hand-writing every resource.
 
+```mermaid
+flowchart TB
+  you[You: terraform apply] --> vpc[VPC: 2 public + 2 private subnets, 1 NAT]
+  vpc --> eks[EKS control plane, API limited to your IP]
+  eks --> sys[system node group: 2 small nodes, always on]
+  eks --> gpu[gpu node group: 0 nodes until you scale it up]
+  gpu -. tainted nvidia.com/gpu .-> pod[Only GPU pods that tolerate the taint land here]
+```
+
 ## Use it
 
 ```
