@@ -73,6 +73,14 @@ Each push runs `terraform fmt -check`, `terraform init` and `validate`, tflint, 
 
 Three Trivy findings are ignored in `.trivyignore`, each with the reason next to it: the public API endpoint (limited to your IP), open outbound traffic from worker nodes (needed to pull images), and the VPC module's default network ACLs (security groups do the filtering).
 
+## What I'd do next
+
+- Apply it once to a throwaway AWS account, fix whatever the first real run turns up, and then change the "not applied" note at the top.
+- Add an S3 backend with state locking as an example, so the state isn't a local file. It would stay off by default.
+- Add Karpenter in place of a fixed GPU node group, so nodes start when a GPU pod is pending and go away when it finishes.
+- Install the NVIDIA device plugin from Terraform with a Helm release, so there is one less manual step after `apply`.
+- Move to one NAT gateway per zone and say in the README what that adds to the idle cost.
+
 ## License
 
 MIT
