@@ -65,6 +65,17 @@ The default is 1.35. EKS charges extra for versions that have left standard supp
 
 The pieces that bill while idle: the EKS control plane, the NAT gateway and the two system nodes. The GPU group costs nothing at 0. Run `terraform destroy` when you finish experimenting.
 
+## If something doesn't work
+
+Since I haven't applied this to a real account, these are the places I'd look first, based on how the code is set up.
+
+- **`terraform plan` fails on `api_allowed_cidrs`.** The variable has no default, and the validation rejects an empty list and `0.0.0.0/0`. Put your own address in `terraform.tfvars`, for example `["203.0.113.7/32"]`.
+- **`kubectl` can't reach the cluster.** The public API only accepts the addresses in `api_allowed_cidrs`. If your IP changed since the last apply, update the list and apply again.
+- **The `gpu-test` pod stays Pending.** The GPU group starts at 0 and nothing in this repo scales it up by itself, so a pending GPU pod won't start a node. Raise the desired size first (see "Turning a GPU on and off") and give the node a few minutes to join.
+- **The pod is scheduled but `nvidia.com/gpu` is missing from the node.** The NVIDIA device plugin isn't installed. Run the `kubectl apply` line from "Use it" and check again.
+- **The GPU node never appears.** Spot capacity for the instance type may be short in your region, or your account's vCPU quota for G instances may be too low. Try `gpu_capacity_type = "ON_DEMAND"` or another entry in `gpu_instance_types`, and check the quotas in the AWS console.
+- **The pod won't schedule on the system nodes.** That's the taint working. Only pods that tolerate `nvidia.com/gpu` and ask for the `workload: gpu` label can use the GPU group, which is what `k8s/gpu-test.yaml` does.
+
 ## CI
 
 Each push runs `terraform fmt -check`, `terraform init` and `validate`, tflint, a Trivy config scan, and a kubeconform check on the test pod.
