@@ -1,0 +1,19 @@
+# Example only. Terraform ignores this file because it doesn't end in .tf.
+#
+# To keep state in S3 instead of a local file:
+#   1. Create the bucket first, outside this repo, with versioning turned on.
+#   2. Copy this file to backend.tf and fill in the three values below.
+#   3. Run `terraform init -migrate-state`.
+#
+# use_lockfile keeps the lock as an object next to the state file, so no
+# DynamoDB table is needed. It needs Terraform 1.11 or newer.
+
+terraform {
+  backend "s3" {
+    bucket       = "your-state-bucket"
+    key          = "eks-gpu/terraform.tfstate"
+    region       = "us-east-1"
+    encrypt      = true
+    use_lockfile = true
+  }
+}
