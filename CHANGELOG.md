@@ -4,6 +4,7 @@ Newest first. Dates are when the change landed on main.
 
 ## 2026-11
 
+- Nov 23: Added `backend.tf.example`, an S3 backend with state locking that stays off unless you copy it.
 - Nov 18: README got an "If something doesn't work" section.
 - Nov 14: README got a "What I'd do next" section.
 - Nov 11: README got a small diagram of what the stack builds.

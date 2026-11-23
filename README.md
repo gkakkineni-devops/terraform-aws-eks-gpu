@@ -61,6 +61,10 @@ The node group is tagged so a cluster autoscaler could manage it, but I haven't 
 
 The default is 1.35. EKS charges extra for versions that have left standard support, and old versions are retired on a schedule, so check the [EKS version calendar](https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html) and update `kubernetes_version` before you apply.
 
+## Remote state
+
+State is a local file by default. `backend.tf.example` shows how to keep it in S3 with locking instead: create a versioned bucket, copy the file to `backend.tf`, fill in the bucket and region, and run `terraform init -migrate-state`. The lock uses `use_lockfile`, so there is no DynamoDB table, but it needs Terraform 1.11 or newer. I haven't run it against a real bucket, and it stays off unless you copy it.
+
 ## Cost
 
 The pieces that bill while idle: the EKS control plane, the NAT gateway and the two system nodes. The GPU group costs nothing at 0. Run `terraform destroy` when you finish experimenting.
@@ -87,7 +91,6 @@ Three Trivy findings are ignored in `.trivyignore`, each with the reason next to
 ## What I'd do next
 
 - Apply it once to a throwaway AWS account, fix whatever the first real run turns up, and then change the "not applied" note at the top.
-- Add an S3 backend with state locking as an example, so the state isn't a local file. It would stay off by default.
 - Add Karpenter in place of a fixed GPU node group, so nodes start when a GPU pod is pending and go away when it finishes.
 - Install the NVIDIA device plugin from Terraform with a Helm release, so there is one less manual step after `apply`.
 - Move to one NAT gateway per zone and say in the README what that adds to the idle cost.
